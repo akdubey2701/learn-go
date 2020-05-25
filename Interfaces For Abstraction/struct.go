@@ -74,6 +74,7 @@ func main() {
 		if strings.Compare(comm, "newanimal") == 0 {
 			temp.Init(animal, action)
 			list = append(list, temp)
+			fmt.Println("created it!")
 		} else if strings.Compare(comm, "query") == 0 {
 			for i := 0; i < len(list); i++ {
 				temp = list[i]
