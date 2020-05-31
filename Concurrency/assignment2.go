@@ -1,25 +1,32 @@
-//go run -race assignment2.go
-/*A race condition is an undesirable situation that occurs when a device or system attempts to perform two or more operations at the same time, but because of the nature of the device or system, the operations must be done in the proper sequence to be done correctly.*/
 package main
 
 import (
 	"fmt"
+	"sync"
 	"time"
 )
 
-func f(from string) {
-	for i := 0; i < 3; i++ {
-		fmt.Println(from, ":", i)
+func main() {
+
+	fmt.Println("\nProgram runs 2 goroutines forever showing how output differs unpredictabley in runs!\n")
+	fmt.Println("X starts as '1' intention is to add 1 to make it '2' and print but routines unpredictable\n")
+	for {
+		x := 1
+		wg := sync.WaitGroup{}
+		wg.Add(2)
+		time.Sleep(2 * time.Second)
+		go addOne(&x, &wg)
+		go printX(&x, &wg)
+		wg.Wait()
 	}
 }
 
-// function f is called directly , function f and another anynomous function  are interleaved to show race condition
-func main() {
-	f("call executed directly")
-	go f("goroutine")
-	go func(msg string) {
-		fmt.Println(msg)
-	}("go routine interleaved")
-	time.Sleep(time.Second)
-	fmt.Println("done")
+func addOne(x *int, wg *sync.WaitGroup) {
+	*x += 1
+	wg.Done()
+}
+
+func printX(x *int, wg *sync.WaitGroup) {
+	fmt.Println(*x)
+	wg.Done()
 }
